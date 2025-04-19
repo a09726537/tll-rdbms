@@ -1,29 +1,38 @@
-# Triple Loop Learning for RDBMS Anomaly Detection
+# TLL-RDBMS: Triple Loop Learning for Intelligent Anomaly Detection in Databases
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Build](https://img.shields.io/badge/build-passing-brightgreen)
-![Python](https://img.shields.io/badge/python-3.10+-blue)
+This repository contains the code, poster, and dataset setup for the paper:
 
-This repository contains the official implementation of the paper:
+**"Intelligent Anomaly Detection in Database Security: A Triple Loop Learning Framework"**  
+Presented at ICSC 2025 by William K. (University of Vienna)
 
-**"Intelligent Anomaly Detection in Database Security: A Triple-Loop Learning Framework"**  
-📝 William Kandolo – University of Vienna  
-📎 IEEE Conference, 2025  
-📄 DOI: _Coming Soon_
+## Overview
 
-## 🔍 Overview
+The TLL framework combines:
+- **Operational loop:** SQL anomaly detection using Kitsune-style autoencoders
+- **Tactical loop:** DQN-based reinforcement learning for adaptive thresholds
+- **Strategic loop:** Few-shot generalization using MAML meta-learning
 
-Triple Loop Learning (TLL) is a recursive architecture for SQL-based anomaly detection that integrates:
+## Files
 
-- SQL-aware Autoencoders (Operational Loop)
-- Deep Q-Learning for threshold calibration (Tactical Loop)
-- Model-Agnostic Meta-Learning (MAML) for domain generalization (Strategic Loop)
+- `poster/Tll_Icsc2025_Poster.tex`: LaTeX source of the conference poster
+- `images/`: Logos and experiment result plots
+- `datasets/`: Placeholder for UNSW-NB15, SQL logs, and MAD-GAN data
+- `notebooks/`: Jupyter/PyTorch code examples (to be added)
 
-TLL achieves state-of-the-art detection of SQL injections, insider misuse, and mimicry attacks with high accuracy and low latency.
+## Setup
 
-![TLL Diagram](images/Triple_Loop_Learning_Framework_Diagram.png)
+```bash
+git clone https://github.com/a09726537/tll-rdbms.git
+cd tll-rdbms
+pip install -r requirements.txt
+```
 
----
+## Contact
 
-## 📁 Repository Structure
+Author: William K.  
+Email: a09726537@unet.univie.ac.at  
+GitHub: https://github.com/a09726537/tll-rdbms
 
+## License
+
+For academic use only. Licensed under an open-source academic license.
