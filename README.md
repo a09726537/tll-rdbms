@@ -36,3 +36,53 @@ tll-rdbms/
 ├── images/                       ← Logos and experiment figures
 ├── datasets/                     ← Placeholder for UNSW-NB15, logs, MAD-GAN outputs
 └── LICENSE                       ← MIT or academic license
+
+## 🚀 Setup Instructions
+
+To get started with the TLL-RDBMS project, follow these steps:
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/a09726537/tll-rdbms.git
+cd tll-rdbms
+
+### 2. Install Python Dependencies
+pip install -r requirements.txt
+Or install manually:
+pip install torch tensorflow scikit-learn faiss-cpu matplotlib pandas
+
+### 3. Follow VM Setup Guide
+
+Open the file: TLL_VM_Setup_Tutorial.txt
+
+Use WSL2, Ubuntu VM, or local Linux environment
+
+Configure PostgreSQL and datasets as instructed
+1. madgan_detection/           → Generate synthetic anomalies
+2. tll_triple_loop_meta/       → Train and evaluate full TLL model
+3. tll_interface/              → Visualize outputs, integrate with Splunk
+
+### 4. Optional Testing & Validation
+
+Use the test cases in tll_vm_runbook/
+
+Validate outputs against labeled SQL logs and UNSW-NB15
+
+
+@misc{tllgithub2025,
+  author = {William Kandolo},
+  title = {Triple Loop Learning for RDBMS Security (TLL-RDBMS)},
+  year = {2025},
+  howpublished = {\url{https://github.com/a09726537/tll-rdbms}},
+  note = {Presented at ICSC 2025, University of Vienna}
+}
+
+## 📜 License
+
+This project is provided under an open-source academic license.  
+See [LICENSE](./LICENSE) for full terms.
+---
+
+
+
