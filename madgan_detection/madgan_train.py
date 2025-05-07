@@ -1,0 +1,1 @@
+# MAD-GAN training script placeholder
