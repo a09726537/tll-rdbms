@@ -1,0 +1,130 @@
+
+# VM Setup Tutorial for Triple Loop Learning (TLL) Project on RDBMS (PostgreSQL & SQL Server)
+
+This guide helps you configure an Ubuntu 22.04 LTS virtual machine to run the complete TLL project with PostgreSQL and/or SQL Server, including AI components and interfaces.
+
+---
+
+## 1. VM Configuration
+
+**Recommended Specs:**
+- 2+ CPUs
+- 8 GB RAM
+- 20+ GB disk
+- OS: Ubuntu 22.04 LTS (64-bit)
+
+You can use:
+- VirtualBox
+- VMware Workstation
+- Hyper-V
+- Cloud (AWS EC2, Azure, etc.)
+
+---
+
+##  2. Basic OS Setup (Ubuntu)
+
+```bash
+# Update system
+sudo apt update && sudo apt upgrade -y
+
+# Install essential tools
+sudo apt install -y python3 python3-pip python3-venv git curl wget unzip
+```
+© 2025 – William Kandolo, University of Vienna
+---
+
+## 3. Install PostgreSQL
+
+```bash
+sudo apt install postgresql postgresql-contrib -y
+
+# Start service
+sudo systemctl enable postgresql
+sudo systemctl start postgresql
+
+# Create user and database
+sudo -u postgres createuser tll_user
+sudo -u postgres createdb tll_db -O tll_user
+```
+
+---
+
+## 4. (Optional) Install SQL Server using Docker
+
+```bash
+sudo apt install docker.io docker-compose -y
+sudo systemctl start docker
+sudo systemctl enable docker
+
+# SQL Server container (Developer Edition)
+sudo docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YourP@ssword123' \
+ -p 1433:1433 --name sqlserver \
+ -d mcr.microsoft.com/mssql/server:2022-latest
+```
+
+---
+
+## 5. Python Environment Setup
+
+```bash
+# Clone the TLL project folder (use your own repo or local copy)
+git clone https://github.com/your-username/tll-rdbms.git
+cd tll-rdbms
+
+# Create Python virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+---
+
+## 6. Launch Interfaces
+
+```bash
+# Run Flask REST API
+python tll_flask_api.py
+
+# In another terminal or tab
+streamlit run tll_streamlit_ui.py
+```
+
+---
+
+## 7. Testing the System
+
+You can:
+- Submit log data via `/detect` endpoint
+- Visualize results in Streamlit UI
+- Adjust anomaly detection thresholds via `/update_threshold`
+
+---
+
+## 8. Optional Security
+
+```bash
+# UFW firewall (allow PostgreSQL, Flask, Streamlit)
+sudo ufw allow 5432/tcp
+sudo ufw allow 5000/tcp
+sudo ufw allow 8501/tcp
+sudo ufw enable
+```
+
+---
+
+## File Layout Inside VM
+
+```
+~/tll-rdbms/
+│
+├── madgan_train.py
+├── tll_double_loop_rl.py
+├── tll_triple_loop_meta.py
+├── tll_flask_api.py
+├── tll_streamlit_ui.py
+├── requirements.txt
+└── ...
+```
+© 2025 – William Kandolo, University of Vienna
