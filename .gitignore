@@ -1,24 +1,17 @@
-# Byte-compiled / optimized / DLL files
+# Datasets
+datasets/*
 __pycache__/
 *.py[cod]
-*$py.class
-
-# Jupyter Notebook checkpoints
-.ipynb_checkpoints
-
-# LaTeX build files
-*.aux
+*.so
 *.log
 *.out
-*.toc
-*.synctex.gz
-*.fdb_latexmk
-*.fls
-
-# OS / Editor files
+*.pid
+.env
+.venv/
+*.env
+.ipynb_checkpoints
 .DS_Store
 Thumbs.db
 *.swp
-
-# Datasets
-datasets/*
+*.img
+.vagrant/
