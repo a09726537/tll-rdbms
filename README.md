@@ -3,7 +3,7 @@
 This repository contains the full implementation, poster, and datasets for the research presented in:
 
 **"Intelligent Anomaly Detection in Database Security: A Triple Loop Learning Framework"**  
-📍 *Presented at ICSC 2025 by William K*  
+📍 *Presented at ICSC 2025 by William K.*  
 🏛 University of Vienna, Austria
 
 ---
