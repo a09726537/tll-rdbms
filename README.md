@@ -69,15 +69,6 @@ Use the test cases in tll_vm_runbook/
 
 Validate outputs against labeled SQL logs and UNSW-NB15
 
-
-@misc{tllgithub2025,
-  author = {William Kandolo},
-  title = {Triple Loop Learning for RDBMS Security (TLL-RDBMS)},
-  year = {2025},
-  howpublished = {\url{https://github.com/a09726537/tll-rdbms}},
-  note = {Presented at ICSC 2025, University of Vienna}
-}
-
 ## 📜 License
 
 This project is provided under an open-source academic license.  
