@@ -1,0 +1,31 @@
+How to Load and Use It
+
+In your API or inference code:
+import joblib
+from sklearn.preprocessing import StandardScaler
+
+# Load the scaler
+scaler: StandardScaler = joblib.load("models/supervised/scaler.pkl")
+
+# Transform new data
+X_new = scaler.transform(new_log_features)
+
+
+
+minimal Python code to create and save scaler.pkl from a dataset (e.g., sql_train.csv):
+
+# save_scaler.py
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+import joblib
+
+# Load your numeric SQL dataset
+df = pd.read_csv("dataset/sql_train.csv")  # or path to your features
+X = df.values
+
+# Fit and save the scaler
+scaler = StandardScaler()
+scaler.fit(X)
+
+# Save the scaler object
+joblib.dump(scaler, "models/supervised/scaler.pkl")
