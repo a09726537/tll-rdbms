@@ -1,4 +1,4 @@
-ck how to
+check how to
 
 # save_scaler.py
 import pandas as pd
