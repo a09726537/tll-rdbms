@@ -1,0 +1,45 @@
+# train_lstm_autoencoder.py
+import numpy as np
+import pandas as pd
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Input, LSTM, RepeatVector
+from tensorflow.keras.callbacks import EarlyStopping
+from sklearn.preprocessing import StandardScaler
+import joblib
+
+# Load your preprocessed data
+df = pd.read_csv("dataset/sql_train.csv")  # already tokenized and numeric
+X = df.values
+
+# Normalize
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Save the scaler
+joblib.dump(scaler, "models/supervised/scaler.pkl")
+
+# Reshape for LSTM: (samples, timesteps, features)
+X_scaled = np.reshape(X_scaled, (X_scaled.shape[0], 1, X_scaled.shape[1]))
+
+# Define LSTM Autoencoder
+timesteps = X_scaled.shape[1]
+n_features = X_scaled.shape[2]
+
+input_layer = Input(shape=(timesteps, n_features))
+encoded = LSTM(32, activation="relu")(input_layer)
+decoded = RepeatVector(timesteps)(encoded)
+decoded = LSTM(n_features, activation="linear", return_sequences=True)(decoded)
+
+autoencoder = Model(inputs=input_layer, outputs=decoded)
+autoencoder.compile(optimizer="adam", loss="mse")
+
+# Train
+early_stop = EarlyStopping(monitor="loss", patience=3, restore_best_weights=True)
+autoencoder.fit(X_scaled, X_scaled,
+                epochs=50,
+                batch_size=64,
+                shuffle=True,
+                callbacks=[early_stop])
+
+# Save model
+autoencoder.save("models/supervised/lstm_v4.h5")
