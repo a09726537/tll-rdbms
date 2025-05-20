@@ -1,62 +1,65 @@
+# 🖥️ VM Setup Tutorial for Triple Loop Learning (TLL) Project on RDBMS (PostgreSQL & SQL Server)
 
-# VM Setup Tutorial for Triple Loop Learning (TLL) Project on RDBMS (PostgreSQL & SQL Server)
+This guide helps you configure an Ubuntu 22.04 LTS virtual machine to run the complete TLL project, including AI-driven anomaly detection, PostgreSQL support, and optional SQL Server with UI interfaces.
 
-This guide helps you configure an Ubuntu 22.04 LTS virtual machine to run the complete TLL project with PostgreSQL and/or SQL Server, including AI components and interfaces.
+© 2025 – William K., University of Vienna, Department of Computer Science  
+📧 a09726537@unet.univie.ac.at
 
 ---
 
-## 1. VM Configuration
+## 🔧 1. VM Configuration
 
 **Recommended Specs:**
-- 2+ CPUs
-- 8 GB RAM
-- 20+ GB disk
+
+- CPU: 2+ cores  
+- RAM: 8 GB  
+- Disk: 20+ GB  
 - OS: Ubuntu 22.04 LTS (64-bit)
 
-You can use:
-- VirtualBox
-- VMware Workstation
-- Hyper-V
-- Cloud (AWS EC2, Azure, etc.)
+**Platforms supported:**
+
+- VirtualBox  
+- VMware Workstation  
+- Hyper-V  
+- Cloud instances (AWS EC2, Azure, Google Cloud)
 
 ---
 
-##  2. Basic OS Setup (Ubuntu)
+## 🛠 2. Basic Ubuntu Setup
 
 ```bash
-# Update system
 sudo apt update && sudo apt upgrade -y
 
-# Install essential tools
+# Install base tools
 sudo apt install -y python3 python3-pip python3-venv git curl wget unzip
 ```
-© 2025 – William Kandolo, University of Vienna
+
 ---
 
-## 3. Install PostgreSQL
+## 🐘 3. Install PostgreSQL
 
 ```bash
 sudo apt install postgresql postgresql-contrib -y
 
-# Start service
+# Enable and start service
 sudo systemctl enable postgresql
 sudo systemctl start postgresql
 
-# Create user and database
+# Create PostgreSQL user and database
 sudo -u postgres createuser tll_user
 sudo -u postgres createdb tll_db -O tll_user
 ```
 
 ---
 
-## 4. (Optional) Install SQL Server using Docker
+## 🧱 4. (Optional) Install SQL Server via Docker
 
 ```bash
 sudo apt install docker.io docker-compose -y
-sudo systemctl start docker
 sudo systemctl enable docker
+sudo systemctl start docker
 
-# SQL Server container (Developer Edition)
+# Pull and run SQL Server (Developer Edition)
 sudo docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YourP@ssword123' \
  -p 1433:1433 --name sqlserver \
  -d mcr.microsoft.com/mssql/server:2022-latest
@@ -64,67 +67,80 @@ sudo docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YourP@ssword123' \
 
 ---
 
-## 5. Python Environment Setup
+## 🐍 5. Python Environment Setup
 
 ```bash
-# Clone the TLL project folder (use your own repo or local copy)
-git clone https://github.com/your-username/tll-rdbms.git
+# Clone the TLL repository
+git clone https://github.com/a09726537/tll-rdbms.git
 cd tll-rdbms
 
-# Create Python virtual environment
+# Create and activate virtual environment
 python3 -m venv venv
 source venv/bin/activate
 
-# Install dependencies
+# Install required Python packages
 pip install -r requirements.txt
 ```
 
 ---
 
-## 6. Launch Interfaces
+## 🚀 6. Launch Detection & UI Interfaces
 
 ```bash
-# Run Flask REST API
+# Launch Flask-based REST API
 python tll_flask_api.py
 
-# In another terminal or tab
+# In a separate terminal
 streamlit run tll_streamlit_ui.py
 ```
 
----
-
-## 7. Testing the System
-
-You can:
-- Submit log data via `/detect` endpoint
-- Visualize results in Streamlit UI
-- Adjust anomaly detection thresholds via `/update_threshold`
+Access Streamlit UI via http://localhost:8501 and API via http://localhost:5000.
 
 ---
 
-## 8. Optional Security
+## 🧪 7. Testing the System
+
+You can test the system in 3 ways:
+
+- Submit SQL log entries via POST to /detect  
+- View real-time detection output in the Streamlit UI  
+- Adjust detection policy via /update_threshold endpoint
+
+---
+
+## 🔐 8. Optional Security (UFW Firewall)
 
 ```bash
-# UFW firewall (allow PostgreSQL, Flask, Streamlit)
-sudo ufw allow 5432/tcp
-sudo ufw allow 5000/tcp
-sudo ufw allow 8501/tcp
+# Allow only necessary ports
+sudo ufw allow 5432/tcp   # PostgreSQL
+sudo ufw allow 5000/tcp   # Flask API
+sudo ufw allow 8501/tcp   # Streamlit
 sudo ufw enable
 ```
 
 ---
 
-## File Layout Inside VM
+## 📁 File Layout in VM
 
-```
+```bash
 ~/tll-rdbms/
-│
-├── madgan_train.py
-├── tll_double_loop_rl.py
-├── tll_triple_loop_meta.py
-├── tll_flask_api.py
-├── tll_streamlit_ui.py
+├── madgan_train.py             ← GAN training for anomaly generation
+├── tll_double_loop_rl.py       ← Reinforcement learning baseline
+├── tll_triple_loop_meta.py     ← Final TLL architecture (MAML)
+├── tll_flask_api.py            ← REST API interface
+├── tll_streamlit_ui.py         ← Dashboard and UI
+├── scripts/
+│   ├── load_unsw.py            ← Preprocess UNSW-NB15 dataset
+│   ├── inject_gan_samples.py   ← Add GAN-generated anomalies
+├── tll_vm_runbook/
+│   └── runbook.pdf             ← Operational instructions and test cases
 ├── requirements.txt
 └── ...
 ```
-© 2025 – William Kandolo, University of Vienna
+
+---
+
+📌 For detailed model configurations and validation steps, refer to:  
+**runbook.pdf** in the tll_vm_runbook/ directory.
+
+---
