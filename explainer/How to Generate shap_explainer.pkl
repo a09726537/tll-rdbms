@@ -1,1 +1,38 @@
 
+import shap
+import numpy as np
+import pandas as pd
+import joblib
+from tensorflow.keras.models import load_model
+
+# Load preprocessed features and model
+X_train = pd.read_csv("dataset/sql_train.csv").values
+model = load_model("models/supervised/lstm_v4.h5")
+
+# Wrapper function
+def predict_fn(X):
+    return model.predict(X)
+
+# Use a sample subset for background data
+background = X_train[np.random.choice(X_train.shape[0], 100, replace=False)]
+
+# Create SHAP explainer
+explainer = shap.KernelExplainer(predict_fn, background)
+
+# Save the explainer
+joblib.dump(explainer, "explainer/shap_explainer.pkl")
+
+
+How to Use It Later
+
+import joblib
+import shap
+
+# Load saved SHAP explainer
+explainer = joblib.load("explainer/shap_explainer.pkl")
+
+# Explain a prediction
+shap_values = explainer.shap_values(X_sample)
+
+# Visualize
+shap.force_plot(explainer.expected_value[0], shap_values[0], feature_names=columns)
