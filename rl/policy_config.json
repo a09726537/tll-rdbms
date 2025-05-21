@@ -1,0 +1,14 @@
+{
+  "algorithm": "DQN",
+  "framework": "Stable-Baselines3",
+  "env": "SQLAnomalyEnv-v1",
+  "learning_rate": 0.0005,
+  "gamma": 0.99,
+  "buffer_size": 100000,
+  "exploration_final_eps": 0.01,
+  "train_freq": 1,
+  "target_update_interval": 500,
+  "n_envs": 1,
+  "seed": 42,
+  "exported_on": "2025-05-21"
+}
