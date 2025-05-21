@@ -1,0 +1,7 @@
+{
+  "model": "sentence-transformers/all-mpnet-base-v2",
+  "index_type": "IndexFlatIP",
+  "normalize": true,
+  "top_k": 5,
+  "distance_metric": "cosine"
+}
