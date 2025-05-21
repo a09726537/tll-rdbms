@@ -18,6 +18,19 @@ The **Triple Loop Learning (TLL)** framework integrates three layers of learning
 - 🎯 **Strategic loop** — few-shot adaptation using meta-learning (MAML) for dynamic contexts.
 
 These components form the **AI-DAC (AI-Driven Adaptive Control)** system, enhanced with a **Retrieval-Augmented Generation (RAG)** module for natural-language explanations and analyst trust.
+# Trained DQN Policy – `policy_dqn.zip`
+
+This file contains the final trained Deep Q-Network (DQN) policy used in the AI-DAC reinforcement learning loop (Loop 2). The policy was trained using the Stable-Baselines3 framework on a custom `SQLAnomalyEnv-v1` Gym environment simulating RDBMS anomaly thresholds.
+
+## Files
+- `policy_dqn.zip` — Trained policy checkpoint
+- `load_dqn_policy.py` — Inference script
+- `policy_config.json` — Hyperparameters and environment settings
+
+## Use
+```bash
+pip install stable-baselines3 gym
+python rl/load_dqn_policy.py
 
 ---
 
@@ -37,6 +50,10 @@ tll-rdbms/
 │   ├── load_unsw.py              ← Converts UNSW-NB15 to structured SQL logs
 │   ├── inject_gan_samples.py     ← Injects GAN-generated anomalies
 │   └── runbook.pdf               ← Experimental runbook (PDF)
+├── rl/
+│   ├── policy_dqn.zip
+│   └── load_dqn_policy.py
+│   └── policy_config.json
 ├── poster/Tll_Icsc2025_Poster.tex ← ICSC 2025 poster (LaTeX source)
 ├── images/                       ← Figures, diagrams, logos
 ├── datasets/                     ← Placeholder for SQL logs, UNSW-NB15, MAD-GAN samples
