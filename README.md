@@ -15,7 +15,7 @@ The **Triple Loop Learning (TLL)** framework integrates three layers of learning
 
 It presents AI-DAC, an explainable and recursive anomaly detection framework built on a **Triple Loop Learning** architecture (supervised + RL + meta-learning), tailored for high-stakes SQL environments.
 
----
+```bash
 
 ## 📌 Key Components
 bash
@@ -52,4 +52,4 @@ tll-rdbms/
 ├── images/                       ← Diagrams, logos, and visual assets
 ├── LICENSE                       ← MIT License
 └── README.md                     ← This file
-
+```
