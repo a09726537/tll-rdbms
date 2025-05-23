@@ -1,3 +1,24 @@
+> **"Intelligent Anomaly Detection in Database Security: A Triple Loop Learning Framework"**  
+> 📍 *Presented at ICSC 2025 by William K.*  
+> 🏛 University of Vienna, Department of Computer Science  
+> 📧 a09726537@unet.univie.ac.at
+
+---
+
+## 🔍 Overview
+
+The **Triple Loop Learning (TLL)** framework integrates three layers of learning to detect and adapt to anomalies in RDBMS environments:
+
+- 🔁 **Operational loop** — anomaly detection using autoencoders trained on SQL logs.
+- 🧠 **Tactical loop** — real-time reinforcement learning (DQN) for threshold/policy tuning.
+- 🎯 **Strategic loop** — few-shot adaptation using meta-learning (MAML) for dynamic contexts.
+
+It presents AI-DAC, an explainable and recursive anomaly detection framework built on a **Triple Loop Learning** architecture (supervised + RL + meta-learning), tailored for high-stakes SQL environments.
+
+---
+
+## 📌 Key Components
+
 tll-rdbms/
 ├── TLL_VM_Setup_Tutorial.txt     ← Full Ubuntu & WSL2 setup tutorial
 ├── rdbms_audit_scripts/          ← PostgreSQL auditing & forensic scripts
