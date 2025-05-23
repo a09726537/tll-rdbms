@@ -18,7 +18,7 @@ It presents AI-DAC, an explainable and recursive anomaly detection framework bui
 ---
 
 ## 📌 Key Components
-
+bash
 tll-rdbms/
 ├── TLL_VM_Setup_Tutorial.txt     ← Full Ubuntu & WSL2 setup tutorial
 ├── rdbms_audit_scripts/          ← PostgreSQL auditing & forensic scripts
