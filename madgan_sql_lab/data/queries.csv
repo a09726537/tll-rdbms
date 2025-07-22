@@ -1,0 +1,5 @@
+query
+SELECT name, age FROM users WHERE age > 21 AND city = 'Paris';
+DROP TABLE users;
+SELECT * FROM login WHERE user = 'admin' AND pass = '123';
+' OR 1=1 --
