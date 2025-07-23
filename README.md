@@ -14,7 +14,21 @@ The **Triple Loop Learning (TLL)** framework integrates three layers of learning
 - 🎯 **Strategic loop** — few-shot adaptation using meta-learning (MAML) for dynamic contexts.
 
 It presents AI-DAC, an explainable and recursive anomaly detection framework built on a **Triple Loop Learning** architecture (supervised + RL + meta-learning), tailored for high-stakes SQL environments.
+# MAD-GAN Anomaly Detection Lab
 
+Anomaly detection pipeline using MAD-GAN for SQL Server logs — designed for integration into the TLL framework.
+
+> **Author:** William Kandolo  
+> 🏛 University of Vienna, Department of Computer Science  
+> 📧 a09726537@unet.univie.ac.at  
+
+---
+
+## 🚀 Usage
+
+### 1. Preprocess Query Logs
+```bash
+python preprocess.py
 ```bash
 
 ## 📌 Key Components
