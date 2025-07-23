@@ -62,4 +62,18 @@ tll-rdbms/
 ├── images/                       ← Diagrams, logos, and visual assets
 ├── LICENSE                       ← MIT License
 └── README.md                     ← This file
+tll-rdbms/madgan_detection/
+├── detect_anomalies.py     ← Run anomaly detection
+├── generator.py            ← Generator architecture
+├── discriminator.py        ← Discriminator architecture
+├── preprocess.py           ← Tokenization and input prep
+├── madgan_train.py         ← Full MAD-GAN training loop
+├── data/
+│   └── queries.csv         ← Raw or labeled SQL query logs
+├── models/
+│   └── *.pth               ← Saved PyTorch models (auto-created)
+├── alerts/
+│   └── anomalies.log       ← Detection results (auto-created)
+├── README.md               ← This file
+
 ```
