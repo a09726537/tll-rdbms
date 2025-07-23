@@ -62,7 +62,7 @@ tll-rdbms/
 ├── images/                       ← Diagrams, logos, and visual assets
 ├── LICENSE                       ← MIT License
 └── README.md                     ← This file
-tll-rdbms/madgan_detection/
+tll-rdbms/madgan_sql_lab/
 ├── detect_anomalies.py     ← Run anomaly detection
 ├── generator.py            ← Generator architecture
 ├── discriminator.py        ← Discriminator architecture
