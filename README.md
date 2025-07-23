@@ -18,10 +18,6 @@ It presents AI-DAC, an explainable and recursive anomaly detection framework bui
 
 Anomaly detection pipeline using MAD-GAN for SQL Server logs — designed for integration into the TLL framework.
 
-> **Author:** William Kandolo  
-> 🏛 University of Vienna, Department of Computer Science  
-> 📧 a09726537@unet.univie.ac.at  
-
 ---
 
 ## 🚀 Usage
