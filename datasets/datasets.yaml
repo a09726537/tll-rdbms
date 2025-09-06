@@ -2,7 +2,7 @@
 version: "1.0"
 schema_version: "tll-datasets-0.1"
 generated_at: "2025-09-06"
-author: "Dr. William Kandolo"
+author: "William Kandolo"
 notes: >
   Central manifest for benchmark, enterprise, and synthetic datasets used in the TLL / AI-DAC pipeline.
   Paths are relative to the repository root unless marked absolute. Fill in placeholders (<...>) as needed.
