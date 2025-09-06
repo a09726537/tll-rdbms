@@ -1,0 +1,367 @@
+# TLL-RDBMS Dataset Manifest
+version: "1.0"
+schema_version: "tll-datasets-0.1"
+generated_at: "2025-09-06"
+author: "Dr. William Kandolo"
+notes: >
+  Central manifest for benchmark, enterprise, and synthetic datasets used in the TLL / AI-DAC pipeline.
+  Paths are relative to the repository root unless marked absolute. Fill in placeholders (<...>) as needed.
+
+# ---------------------------
+# Common anchors / templates
+# ---------------------------
+anchors:
+  preprocessing:
+    sql_basic: &sql_preproc
+      steps:
+        - name: parse_sql_logs
+          params: {timezone: "UTC", tolerate_malformed: true}
+        - name: derive_fingerprint
+          params: {algorithm: "pt-query-digest|pg_query", keep_literals: false}
+        - name: anonymize_identities
+          params: {hash_alg: "sha256", salt_ref: "secrets/salt.txt", fields: ["user", "role", "source_ip"]}
+        - name: feature_extraction
+          params:
+            fields:
+              - duration_ms
+              - rows_read
+              - rows_written
+              - cpu_ms
+              - io_bytes
+              - lock_wait_ms
+              - query_fingerprint
+              - hour_of_day
+              - day_of_week
+        - name: normalize
+          params: {method: "zscore", robust: true}
+        - name: handle_imbalance
+          params: {strategy: "class_weight|focal_loss|smote", apply: "as_configured"}
+        - name: export
+          params: {format: "parquet", compression: "snappy"}
+    net_basic: &net_preproc
+      steps:
+        - name: load_csv
+          params: {header: true, infer_schema: true}
+        - name: select_features
+          params: {keep: "all_except_id"}
+        - name: normalize
+          params: {method: "zscore"}
+        - name: export
+          params: {format: "parquet", compression: "snappy"}
+
+  features:
+    sql_core: &sql_features
+      - timestamp
+      - user_token_sha256
+      - db
+      - schema
+      - object
+      - action        # SELECT/INSERT/UPDATE/DELETE/DDL
+      - query_fingerprint
+      - duration_ms
+      - rows_read
+      - rows_written
+      - cpu_ms
+      - io_bytes
+      - lock_wait_ms
+      - error_code
+      - app_name
+      - host_token_sha256
+      - source_ip_token
+    net_core: &net_features
+      - (dataset_defined_features)   # e.g., the 49 features in UNSW-NB15
+
+  splits:
+    stratified_70_15_15: &split_strat
+      strategy: "stratified"
+      train: 0.70
+      val: 0.15
+      test: 0.15
+      seed: 42
+    temporal_holdout: &split_temp
+      strategy: "temporal"
+      train_range: ["<YYYY-MM-DD>", "<YYYY-MM-DD>"]
+      val_range:   ["<YYYY-MM-DD>", "<YYYY-MM-DD>"]
+      test_range:  ["<YYYY-MM-DD>", "<YYYY-MM-DD>"]
+
+# -----------
+# Datasets
+# -----------
+datasets:
+
+  - id: unsw-nb15
+    name: "UNSW-NB15"
+    category: "benchmark"
+    domain: "netsec"
+    confidential: false
+    access: "public"
+    source_url: "https://research.unsw.edu.au/projects/unsw-nb15-dataset"  # verify at use time
+    license: "per-source-license (see source_url)"
+    storage:
+      raw: "data/raw/unsw-nb15/*.csv"
+      processed: "data/processed/unsw-nb15/*.parquet"
+      cache: "data/cache/unsw-nb15/"
+    format: "csv"
+    row_count: "~2500000"
+    features_count: 49
+    label:
+      type: "multi-class"
+      field: "label"
+      classes: ["Normal","Fuzzers","Analysis","Backdoors","DoS","Exploits","Generic","Reconnaissance","Shellcode","Worms"]
+    task: ["supervised","unsupervised"]
+    features: *net_features
+    preprocessing: *net_preproc
+    splits: *split_strat
+    quality_checks:
+      duplicates_removed: true
+      missing_values_handled: true
+      class_balance_reviewed: true
+    lineage:
+      acquired_on: "<YYYY-MM-DD>"
+      checksum_manifest: "data/raw/unsw-nb15/CHECKSUMS.txt"
+
+  - id: cicids2017
+    name: "CICIDS2017"
+    category: "benchmark"
+    domain: "netsec"
+    confidential: false
+    access: "public"
+    source_url: "https://www.unb.ca/cic/datasets/ids-2017.html"  # verify at use time
+    license: "per-source-license (see source_url)"
+    storage:
+      raw: "data/raw/cicids2017/*.csv"
+      processed: "data/processed/cicids2017/*.parquet"
+      cache: "data/cache/cicids2017/"
+    format: "csv"
+    row_count: "~"
+    features_count: "~"
+    label:
+      type: "multi-class"
+      field: "Label"
+      classes: ["BENIGN","DoS","DDoS","Botnet","Infiltration","WebAttack", "BruteForce", "Heartbleed"]
+    task: ["supervised","unsupervised"]
+    features: *net_features
+    preprocessing: *net_preproc
+    splits: *split_strat
+
+  - id: nsl-kdd
+    name: "NSL-KDD"
+    category: "benchmark"
+    domain: "netsec"
+    confidential: false
+    access: "public"
+    source_url: "https://www.unb.ca/cic/datasets/nsl.html"  # verify at use time
+    license: "per-source-license (see source_url)"
+    storage:
+      raw: "data/raw/nsl-kdd/*"
+      processed: "data/processed/nsl-kdd/*.parquet"
+      cache: "data/cache/nsl-kdd/"
+    format: "csv"
+    row_count: "~125973"
+    features_count: "~"
+    label:
+      type: "binary"
+      field: "label"
+      classes: ["normal","attack"]
+    task: ["supervised","unsupervised"]
+    features: *net_features
+    preprocessing: *net_preproc
+    splits: *split_strat
+
+  - id: enterprise-sql-finance
+    name: "Enterprise SQL Logs (Finance)"
+    category: "enterprise"
+    domain: "rdbms"
+    confidential: true
+    access: "nda-restricted"
+    owner: "<Bank/Dept Name>"
+    governance:
+      nda_id: "<NDA-ID>"
+      dpa_id: "<DPA-ID>"
+      retention_policy: "delete_or_archive_after:<period>"
+      approver: "<Data Steward / DPO>"
+    storage:
+      raw: "data/raw/enterprise/finance/sql/*.jsonl"
+      processed: "data/processed/enterprise/finance/sql/*.parquet"
+      secure_vault: "<absolute_path_or_s3://secure-bucket/>"
+    format: "jsonl"
+    schema:
+      fields:
+        - {name: "timestamp", type: "datetime"}
+        - {name: "user_token_sha256", type: "string"}
+        - {name: "db", type: "string"}
+        - {name: "schema", type: "string"}
+        - {name: "object", type: "string"}
+        - {name: "action", type: "string"}   # SELECT/INSERT/UPDATE/DELETE/DDL
+        - {name: "query_fingerprint", type: "string"}
+        - {name: "duration_ms", type: "float"}
+        - {name: "rows_read", type: "int"}
+        - {name: "rows_written", type: "int"}
+        - {name: "cpu_ms", type: "float"}
+        - {name: "io_bytes", type: "int"}
+        - {name: "lock_wait_ms", type: "float"}
+        - {name: "error_code", type: "string"}
+        - {name: "app_name", type: "string"}
+        - {name: "host_token_sha256", type: "string"}
+        - {name: "source_ip_token", type: "string"}
+        - {name: "anomaly_label", type: "int"} # 0/1 where available; else -1
+    label:
+      type: "binary|none"
+      field: "anomaly_label"
+      classes: [0,1]
+    task: ["supervised","unsupervised","semi-supervised"]
+    features: *sql_features
+    preprocessing: *sql_preproc
+    splits: *split_temp
+    quality_checks:
+      pii_sanitized: true
+      irreversible_hashing: "sha256"
+      k_anonymity_target: 5
+      access_logged: true
+
+  - id: enterprise-sql-healthcare
+    name: "Enterprise SQL Logs (Healthcare)"
+    category: "enterprise"
+    domain: "rdbms"
+    confidential: true
+    access: "nda-restricted"
+    owner: "<Hospital/Dept Name>"
+    governance:
+      nda_id: "<NDA-ID>"
+      dpa_id: "<DPA-ID>"
+      retention_policy: "delete_or_archive_after:<period>"
+      approver: "<Data Steward / DPO>"
+    storage:
+      raw: "data/raw/enterprise/health/sql/*.jsonl"
+      processed: "data/processed/enterprise/health/sql/*.parquet"
+      secure_vault: "<absolute_path_or_s3://secure-bucket/>"
+    format: "jsonl"
+    schema:
+      fields:
+        - {name: "timestamp", type: "datetime"}
+        - {name: "user_token_sha256", type: "string"}
+        - {name: "db", type: "string"}
+        - {name: "schema", type: "string"}
+        - {name: "object", type: "string"}
+        - {name: "action", type: "string"}
+        - {name: "query_fingerprint", type: "string"}
+        - {name: "duration_ms", type: "float"}
+        - {name: "rows_read", type: "int"}
+        - {name: "rows_written", type: "int"}
+        - {name: "cpu_ms", type: "float"}
+        - {name: "io_bytes", type: "int"}
+        - {name: "lock_wait_ms", type: "float"}
+        - {name: "error_code", type: "string"}
+        - {name: "app_name", type: "string"}
+        - {name: "host_token_sha256", type: "string"}
+        - {name: "source_ip_token", type: "string"}
+        - {name: "anomaly_label", type: "int"}
+    label:
+      type: "binary|none"
+      field: "anomaly_label"
+      classes: [0,1]
+    task: ["supervised","unsupervised","semi-supervised"]
+    features: *sql_features
+    preprocessing: *sql_preproc
+    splits: *split_temp
+    quality_checks:
+      pii_sanitized: true
+      irreversible_hashing: "sha256"
+      k_anonymity_target: 5
+      access_logged: true
+
+  - id: madgan-synthetic
+    name: "MAD-GAN Synthetic SQL Logs"
+    category: "synthetic"
+    domain: "rdbms"
+    confidential: false
+    access: "local-generated"
+    lineage:
+      generated_by: "madgan_detection/generator.py"
+      generated_from:
+        - "enterprise-sql-finance(processed)"
+        - "enterprise-sql-healthcare(processed)"
+    storage:
+      raw: "data/raw/synthetic/madgan/*.parquet"
+      processed: "data/processed/synthetic/madgan/*.parquet"
+      cache: "data/cache/synthetic/madgan/"
+    format: "parquet"
+    features: *sql_features
+    label:
+      type: "binary"
+      field: "anomaly_label"
+      classes: [0,1]
+    preprocessing:
+      steps:
+        - name: validate_schema_compat
+          params: {reference: "enterprise-sql-finance.schema"}
+        - name: normalize
+          params: {method: "zscore"}
+        - name: export
+          params: {format: "parquet", compression: "snappy"}
+    splits: *split_strat
+    quality_checks:
+      drift_checked_against: ["enterprise-sql-finance","enterprise-sql-healthcare"]
+      rare_event_targets: ["SQLi","privilege_escalation","DoS_pattern"]
+
+  - id: swift-hydra-adversarial
+    name: "Swift Hydra Adversarial Queries"
+    category: "synthetic"
+    domain: "rdbms"
+    confidential: false
+    access: "local-generated"
+    lineage:
+      generated_by: "swift_hydra/generate_adversarial.py"
+      reward_signals: ["evasion_success","resource_impact","policy_violation"]
+    storage:
+      raw: "data/raw/synthetic/swift-hydra/*.jsonl"
+      processed: "data/processed/synthetic/swift-hydra/*.parquet"
+    format: "jsonl"
+    schema:
+      fields:
+        - {name: "timestamp", type: "datetime"}
+        - {name: "db", type: "string"}
+        - {name: "query_text", type: "string"}      # keep internal only; do not expose
+        - {name: "query_fingerprint", type: "string"}
+        - {name: "attack_type", type: "string"}     # e.g., sqli_union, sqli_boolean, privilege_escalation
+        - {name: "reward_score", type: "float"}
+        - {name: "anomaly_label", type: "int"}      # 1 for adversarial
+    label:
+      type: "binary"
+      field: "anomaly_label"
+      classes: [0,1]
+    features:
+      - query_fingerprint
+      - reward_score
+      - attack_type
+    preprocessing:
+      steps:
+        - name: hash_sensitive
+          params: {fields: ["query_text"], hash_alg: "sha256"}
+        - name: export
+          params: {format: "parquet", compression: "snappy"}
+    splits: *split_strat
+
+# -----------
+# Default evaluation mapping (optional)
+# -----------
+evaluation:
+  binary_detection:
+    datasets: ["enterprise-sql-finance","enterprise-sql-healthcare","madgan-synthetic","swift-hydra-adversarial"]
+    label_field: "anomaly_label"
+    metrics: ["precision","recall","f1","auc"]
+  multiclass_detection:
+    datasets: ["unsw-nb15","cicids2017"]
+    label_field: "label|Label"
+    metrics: ["macro_f1","weighted_f1","auc_ovr"]
+
+# -----------
+# Security / compliance notes (global)
+# -----------
+compliance:
+  gdpr: {status: "enforced", dpa_ids: ["<DPA-ID>"]}
+  hipaa: {status: "as_applicable", notes: "Healthcare logs handled with strict safeguards"}
+  pii_controls:
+    hashing: {algorithm: "sha256", salt_ref: "secrets/salt.txt"}
+    tokenization: {enabled: true}
+    reid_risk: {k_anonymity_target: 5}
