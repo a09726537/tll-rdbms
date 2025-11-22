@@ -1,0 +1,39 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ai-dac-hpa
+  namespace: aida
+  labels:
+    app: ai-dac
+    module: tll
+    author: william-k
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ai-dac-deployment
+  minReplicas: 2          # keep at least 2 pods (matches your deployment)
+  maxReplicas: 10         # upper bound – adjust for your cluster capacity
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          # Target average CPU usage across pods (in % of requested CPU)
+          # Example: with request=500m, 70% means autoscale above ~350m
+          averageUtilization: 70
+  behavior:
+    # Optional but recommended: smooth scaling behavior
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+        - type: Percent
+          value: 100       # can double pod count at most per step
+          periodSeconds: 60
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+        - type: Percent
+          value: 50        # at most halve pod count per step
+          periodSeconds: 60

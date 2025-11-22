@@ -1,0 +1,109 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aida-dac-config
+  namespace: aida
+  labels:
+    app: ai-dac
+    module: tll
+    author: william-k
+data:
+
+  # ============================================================
+  # Core System Settings
+  # ============================================================
+  APP_ENV: "production"
+  DEVICE: "cuda"            # cuda | cpu
+  LOG_LEVEL: "INFO"
+
+  # ============================================================
+  # Model Paths (inside Docker container)
+  # ============================================================
+  MODEL_AE_PATH: "/opt/aida/models/autoencoder.pt"
+  MODEL_GAN_GEN_PATH: "/opt/aida/models/madgan_generator.pt"
+  MODEL_GAN_DISC_PATH: "/opt/aida/models/madgan_discriminator.pt"
+  MODEL_CLASSIFIER_PATH: "/opt/aida/models/classifier.pt"
+  MODEL_META_PATH: "/opt/aida/models/meta_learner.pt"
+  MODEL_RL_POLICY_PATH: "/opt/aida/checkpoints/dqn_agent.pth"
+
+  # ============================================================
+  # Database Connections
+  # ============================================================
+  POSTGRES_HOST: "postgres"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "sqllogs"
+  POSTGRES_USER: "aida"
+  POSTGRES_SSLMODE: "disable"
+
+  MSSQL_HOST: "mssql"
+  MSSQL_PORT: "1433"
+  MSSQL_DB: "logs"
+  MSSQL_USER: "aida"
+  MSSQL_ENCRYPT: "no"
+
+  # Passwords kept in Kubernetes Secrets, not ConfigMap.
+
+  # ============================================================
+  # MAD-GAN Settings
+  # ============================================================
+  GAN_LATENT_DIM: "128"
+  GAN_HIDDEN_DIM: "256"
+  GAN_SEQ_LENGTH: "64"
+  GAN_THRESHOLD: "0.85"
+  GAN_RECON_WEIGHT: "0.6"
+  GAN_DISC_WEIGHT: "0.4"
+
+  # ============================================================
+  # Autoencoder Settings
+  # ============================================================
+  AE_LATENT_DIM: "64"
+  AE_THRESHOLD: "0.75"
+
+  # ============================================================
+  # Reinforcement Learning (DQN Agent)
+  # ============================================================
+  RL_GAMMA: "0.99"
+  RL_LR: "0.001"
+  RL_EPS_START: "1.0"
+  RL_EPS_END: "0.05"
+  RL_EPS_DECAY: "50000"
+  RL_TARGET_UPDATE: "1000"
+  RL_BUFFER_SIZE: "100000"
+  RL_BATCH_SIZE: "64"
+
+  # ============================================================
+  # Meta-Learning (Loop 3)
+  # ============================================================
+  META_INNER_STEPS: "1"
+  META_LR_INNER: "0.001"
+  META_LR_OUTER: "0.0001"
+
+  # ============================================================
+  # RAG Settings
+  # ============================================================
+  RAG_KB_PATH: "/opt/aida/rag/kb"
+  RAG_EMBEDDING_MODEL: "sentence-transformers/all-mpnet-base-v2"
+  RAG_TOP_K: "5"
+  RAG_FAISS_INDEX: "/opt/aida/rag/index/faiss.index"
+
+  # ============================================================
+  # Logging & Metrics
+  # ============================================================
+  METRICS_ENABLED: "true"
+  PROMETHEUS_PORT: "9101"
+
+  # ============================================================
+  # Latency Testing (Optional)
+  # ============================================================
+  LATENCY_BATCH_SIZE: "256"
+  LATENCY_INPUT_DIM: "128"
+  LATENCY_RUNS: "200"
+  LATENCY_WARMUP: "50"
+
+  # ============================================================
+  # Kubernetes Probes
+  # ============================================================
+  HEALTHCHECK_PATH: "/health"
+  LIVENESS_PATH: "/live"
+  READINESS_PATH: "/ready"
+
