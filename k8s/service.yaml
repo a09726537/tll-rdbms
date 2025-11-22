@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-dac-service
+  namespace: aida
+  labels:
+    app: ai-dac
+    module: tll
+    tier: backend
+    author: william-k
+spec:
+  type: ClusterIP         # Change to LoadBalancer or NodePort if needed
+  selector:
+    app: ai-dac
+    module: tll
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8000          # Service port (inside cluster)
+      targetPort: 8000    # Container port
